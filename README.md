@@ -100,3 +100,45 @@ Jika saya membuat kelas baru `CreateProductFunctionalTest.java` dengan prosedur 
 modul 3 done :p
 
 ---
+
+## Reflection 4
+
+1. Is the TDD flow useful enough?
+   - Ya, TDD membantu developer memecah masalah besar menjadi potongan kecil. Dengan menulis tes dulu, developer dipaksa memikirkan output yang diharapkan sebelum pusing dengan logika internalnya. Ini sangat membantu saat debugging algoritma yang kompleks.
+
+2. Refleksi Prinsip F.I.R.S.T. pada Unit Test
+   - Fast: Tes harus berjalan secepat mungkin tanpa mengganggu alur kerja. Penggunaan stubs pada tutorial bertujuan agar tes tidak bergantung pada database asli, sehingga tetap cepat
+   - Isolated : Sebuah tes tidak boleh memengaruhi atau bergantung pada hasil tes lain. Tutorial mengajarkan penggunaan metode setUp (dengan @BeforeEach) untuk mereset objek dummy atau mock sebelum setiap kasus tes dijalankan.
+   - Repeatable : Tes harus memberikan hasil yang konsisten setiap kali dijalankan. Dengan mengisolasi tes dari layanan eksternal yang tidak menentu, hasil tes akan tetap sama.
+   - Self-Validating: Tes harus memiliki assertion (pernyataan) yang jelas untuk menentukan lulus atau gagal tanpa perlu pengecekan manual. Di tutorial, penggunaan assertEquals atau assertThrows memastikan tes tervalidasi sendiri.
+   - Thorough/Timely: Tes harus mencakup happy path (jalur normal) dan unhappy path (jalur error). Prinsip "Timely" juga berarti tes ditulis sebelum kode fungsionalnya, sesuai dengan alur RED-GREEN-REFACTOR.
+
+### Bonus 2 Reflections
+Link PR Bonus 2: https://github.com/B-Hasanul-Muttaqin-2406413331/Modul-1-Coding-Standard/pull/7
+
+Suggested changes for my team mate (my comment in their PR): https://github.com/B-Hasanul-Muttaqin-2406413331/Modul-1-Coding-Standard/pull/6#issuecomment-4031534339
+
+1. Analysis of Partner's Code
+   The initial implementation of the Payment module by my partner was functional and successfully passed all basic unit tests, which is a great starting point. However, there were a few architectural aspects that could be improved:
+     - Tight Coupling: The core Payment model was directly responsible for the validation logic of every supported payment method (Voucher and COD).
+     - Low Extensibility: Adding a new payment method required modifying the internal logic of the Payment class, making it harder to scale the project without introducing bugs.
+
+2. My Contributions
+   To improve the code quality of the order branch, I contributed the following:
+      - Code Review: Analyzed Payment.java, PaymentRepository.java, and PaymentServiceImpl.java to identify potential maintenance risks.
+     - Architecture Redesign: Introduced the Strategy Pattern to decouple validation logic from the data model.
+     - Refactoring Execution: Created a new package for payment strategies, extracted validation logic into dedicated classes, and updated the Payment model to use these strategies.
+     - Testing & Verification: Ensured that the refactored code still passes all existing test cases using ./gradlew test.
+
+3. Identified Code Smells
+   During the review, I identified two primary code smells:
+      - Long Method & Large Class: The calculateStatus method and its helpers (validateVoucher, countDigits, validateCashOnDelivery) made the Payment class bloated and gave it too many responsibilities.
+     - Switch Statements / Conditional Complexity: The use of multiple if statements to check the payment method string violates the Open-Closed Principle, as the class must be modified every time a new method is added.
+
+4. Refactoring Steps
+   I suggested and executed the following steps to fix the identified smells:
+     - Interface Extraction: Created the PaymentStrategy interface to define a common contract for all payment validations.
+     - Concrete Strategy Creation: Extracted logic into VoucherPaymentStrategy and CashOnDeliveryPaymentStrategy classes.
+     - Encapsulation of Constants: Moved payment-specific constants (like VOUCHER_CODE_LENGTH) into their respective strategy classes to improve encapsulation.
+     - Composition over Inheritance: Updated Payment.java to use a Map of strategies, allowing it to determine the status dynamically based on the input method without complex conditional logic.
+     - Clean up: Removed redundant helper methods from the Payment model to keep it focused strictly on data representation.
