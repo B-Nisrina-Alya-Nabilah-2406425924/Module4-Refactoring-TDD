@@ -19,32 +19,46 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
         Payment payment = new Payment(UUID.randomUUID().toString(), method, paymentData);
+        payment.setOrder(order);
 
-        boolean isValid = false;
-        if (method.equals("VOUCHER")) {
-            String voucher = paymentData.get("voucherCode");
-            if (voucher != null && voucher.length() == 16 && voucher.startsWith("ESHOP")) {
-                int numCount = 0;
-                for (char c : voucher.toCharArray()) {
-                    if (Character.isDigit(c)) numCount++;
-                }
-                if (numCount == 8) isValid = true;
-            }
-        } else if (method.equals("BANK_TRANSFER")) {
-            String bank = paymentData.get("bankName");
-            String ref = paymentData.get("referenceCode");
-            if (bank != null && !bank.isEmpty() && ref != null && !ref.isEmpty()) {
-                isValid = true;
-            }
+        boolean isValid = method.equals("VOUCHER") ? validateVoucher(paymentData) : validateBankTransfer(paymentData);
+
+        if (isValid) {
+            payment.setStatus("SUCCESS");
+            order.setStatus("SUCCESS");
+        } else {
+            payment.setStatus("REJECTED");
+            order.setStatus("FAILED");
         }
 
-        payment.setStatus(isValid ? "SUCCESS" : "REJECTED");
         return paymentRepository.save(payment);
+    }
+
+    private boolean validateVoucher(Map<String, String> paymentData) {
+        String voucher = paymentData.get("voucherCode");
+        return voucher != null && voucher.length() == 16 &&
+                voucher.startsWith("ESHOP") &&
+                voucher.replaceAll("[^0-9]", "").length() == 8;
+    }
+
+    private boolean validateBankTransfer(Map<String, String> paymentData) {
+        String bank = paymentData.get("bankName");
+        String ref = paymentData.get("referenceCode");
+        return bank != null && !bank.isEmpty() && ref != null && !ref.isEmpty();
     }
 
     @Override
     public Payment setStatus(Payment payment, String status) {
         payment.setStatus(status);
+
+        if (payment.getOrder() != null) {
+            if (status.equals("SUCCESS")) {
+                payment.getOrder().setStatus("SUCCESS");
+            } else if (status.equals("REJECTED")) {
+                payment.getOrder().setStatus("FAILED");
+            }
+        }
+
         paymentRepository.save(payment);
         return payment;
     }
