@@ -22,6 +22,7 @@ class PaymentTest {
         paymentData.put("voucherCode", "ESHOP1234ABC5678");
         Payment payment = new Payment("1", "VOUCHER", paymentData);
 
+
         assertEquals("1", payment.getId());
         assertEquals("VOUCHER", payment.getMethod());
         assertEquals(paymentData, payment.getPaymentData());
