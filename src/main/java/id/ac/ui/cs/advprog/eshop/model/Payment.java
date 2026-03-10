@@ -16,5 +16,9 @@ public class Payment {
         this.id = id;
         this.method = method;
         this.paymentData = paymentData;
+
+        if (paymentData == null || paymentData.isEmpty()) {
+            throw new IllegalArgumentException("Payment data cannot be empty");
+        }
     }
 }
