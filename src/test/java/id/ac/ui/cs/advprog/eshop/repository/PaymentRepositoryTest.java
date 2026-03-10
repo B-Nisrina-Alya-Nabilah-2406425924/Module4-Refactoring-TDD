@@ -23,7 +23,6 @@ class PaymentRepositoryTest {
     void testSaveAndFindById() {
         Payment payment = new Payment("1", "VOUCHER", paymentData);
         paymentRepository.save(payment);
-
         Payment saved = paymentRepository.findById("1");
         assertNotNull(saved);
         assertEquals("1", saved.getId());
