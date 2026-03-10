@@ -100,3 +100,15 @@ Jika saya membuat kelas baru `CreateProductFunctionalTest.java` dengan prosedur 
 modul 3 done :p
 
 ---
+
+## Reflection 4
+
+1. Is the TDD flow useful enough?
+   - Ya, TDD membantu developer memecah masalah besar menjadi potongan kecil. Dengan menulis tes dulu, developer dipaksa memikirkan output yang diharapkan sebelum pusing dengan logika internalnya. Ini sangat membantu saat debugging algoritma yang kompleks.
+
+2. Refleksi Prinsip F.I.R.S.T. pada Unit Test
+   - Fast: Tes harus berjalan secepat mungkin tanpa mengganggu alur kerja. Penggunaan stubs pada tutorial bertujuan agar tes tidak bergantung pada database asli, sehingga tetap cepat
+   - Isolated : Sebuah tes tidak boleh memengaruhi atau bergantung pada hasil tes lain. Tutorial mengajarkan penggunaan metode setUp (dengan @BeforeEach) untuk mereset objek dummy atau mock sebelum setiap kasus tes dijalankan.
+   - Repeatable : Tes harus memberikan hasil yang konsisten setiap kali dijalankan. Dengan mengisolasi tes dari layanan eksternal yang tidak menentu, hasil tes akan tetap sama.
+   - Self-Validating: Tes harus memiliki assertion (pernyataan) yang jelas untuk menentukan lulus atau gagal tanpa perlu pengecekan manual. Di tutorial, penggunaan assertEquals atau assertThrows memastikan tes tervalidasi sendiri.
+   - Thorough/Timely: Tes harus mencakup happy path (jalur normal) dan unhappy path (jalur error). Prinsip "Timely" juga berarti tes ditulis sebelum kode fungsionalnya, sesuai dengan alur RED-GREEN-REFACTOR.
