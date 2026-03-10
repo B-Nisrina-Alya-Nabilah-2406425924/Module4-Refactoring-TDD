@@ -5,12 +5,13 @@ import lombok.Setter;
 import java.util.Map;
 
 @Getter
-@Setter
 public class Payment {
     private String id;
     private String method;
+    @Setter
     private String status;
     private Map<String, String> paymentData;
+    @Setter
     private Order order;
 
     public Payment(String id, String method, Map<String, String> paymentData) {
