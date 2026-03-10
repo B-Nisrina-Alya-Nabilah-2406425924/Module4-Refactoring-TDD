@@ -22,16 +22,9 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setOrder(order);
 
         boolean isValid = method.equals("VOUCHER") ? validateVoucher(paymentData) : validateBankTransfer(paymentData);
+        String status = isValid ? "SUCCESS" : "REJECTED";
 
-        if (isValid) {
-            payment.setStatus("SUCCESS");
-            order.setStatus("SUCCESS");
-        } else {
-            payment.setStatus("REJECTED");
-            order.setStatus("FAILED");
-        }
-
-        return paymentRepository.save(payment);
+        return setStatus(payment, status);
     }
 
     private boolean validateVoucher(Map<String, String> paymentData) {
